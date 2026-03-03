@@ -546,25 +546,187 @@ This allows:
   </Card>
 </CardGroup>
 
+## GithubButton Component
+
+**Location:** `src/components/github-button.tsx`
+
+A simple link button that navigates to the GitHub repository. Uses the GitHub icon from lucide-react and pulls the repository URL from the config.
+
+### Source Code
+
+```tsx
+import { Github } from 'lucide-react'
+import { GITHUB_REPO_URL } from '@/lib/config'
+
+export function GithubButton() {
+  return (
+    <a
+      href={GITHUB_REPO_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="p-2 rounded-full hover:bg-muted transition-colors"
+      aria-label="View on GitHub"
+    >
+      <Github className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
+    </a>
+  )
+}
+```
+
+### Features
+
+- Opens GitHub repository in a new tab
+- Muted icon color with hover state
+- Accessible with `aria-label`
+- Rounded hover background
+- Uses `GITHUB_REPO_URL` from `src/lib/config.ts`
+- Security attributes: `rel="noopener noreferrer"`
+
+### Configuration
+
+The GitHub URL is defined in `src/lib/config.ts`:
+
+```tsx
+export const GITHUB_REPO_URL = 'https://github.com/NabilNYMansour/qrcodeer'
+```
+
+### Usage
+
+The component is displayed in the app header alongside the theme toggle:
+
+```tsx
+import { GithubButton } from '@/components/github-button'
+import { ThemeToggle } from '@/components/theme-toggle'
+
+<header className="py-2 px-4">
+  <div className="max-w-4xl mx-auto flex items-center justify-between">
+    <a href="/" className="font-bold text-2xl">QRcodeer</a>
+    <div className="flex items-center gap-1">
+      <ThemeToggle />
+      <GithubButton />
+    </div>
+  </div>
+</header>
+```
+
+### Styling Classes
+
+- `p-2` - Padding for click area
+- `rounded-full` - Circular button shape
+- `hover:bg-muted` - Subtle background on hover
+- `transition-colors` - Smooth color transitions
+- `w-5 h-5` - Icon size
+- `text-muted-foreground` - Muted icon color
+- `hover:text-foreground` - Full color on hover
+
+## ThemeToggle Component
+
+**Location:** `src/components/theme-toggle.tsx`
+
+A button that toggles between dark and light themes. Uses the `useTheme` hook from `next-themes` and displays sun/moon icons based on the current theme.
+
+### Source Code
+
+```tsx
+import { Moon, Sun } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <button
+        type="button"
+        className="p-2 rounded-full hover:bg-muted transition-colors"
+        aria-label="Toggle theme"
+        disabled
+      >
+        <Sun className="w-5 h-5 text-muted-foreground" />
+      </button>
+    )
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      className="p-2 rounded-full hover:bg-muted transition-colors cursor-pointer"
+      aria-label="Toggle theme"
+    >
+      {theme === 'dark' ? (
+        <Sun className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
+      ) : (
+        <Moon className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors" />
+      )}
+    </button>
+  )
+}
+```
+
+### Features
+
+- Toggles between light and dark mode on click
+- Displays Sun icon in dark mode (to switch to light)
+- Displays Moon icon in light mode (to switch to dark)
+- Hydration-safe with `mounted` state check
+- Shows disabled placeholder until client-side mount
+- Accessible with `aria-label`
+
+### Hydration Protection
+
+The `mounted` state ensures the component doesn't cause hydration mismatches:
+
+1. Initially renders a disabled placeholder
+2. After mounting on client, enables interactive toggle
+3. Prevents server/client HTML mismatch
+4. Smooth initial load without flash
+
+### Integration
+
+Works with the `ThemeProvider` from `@/components/providers/theme-provider`:
+
+```tsx
+import { ThemeProvider } from '@/components/providers/theme-provider'
+import { ThemeToggle } from '@/components/theme-toggle'
+
+<ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+  <header>
+    <ThemeToggle />
+  </header>
+</ThemeProvider>
+```
+
 ## File Structure
 
 ```
-src/components/ui/
-├── button.tsx (65 lines)
-│   ├── buttonVariants (cva configuration)
-│   └── Button component
-├── card.tsx (59 lines)
-│   ├── Card
-│   ├── CardHeader
-│   ├── CardTitle
-│   ├── CardDescription
-│   └── CardContent
-├── input.tsx (22 lines)
-│   └── Input component
-├── label.tsx (22 lines)
-│   └── Label component
-└── hover-card.tsx (45 lines)
-    ├── HoverCard (root)
-    ├── HoverCardTrigger
-    └── HoverCardContent
+src/components/
+├── github-button.tsx (17 lines)
+│   └── GithubButton component
+├── theme-toggle.tsx (41 lines)
+│   └── ThemeToggle component
+└── ui/
+    ├── button.tsx (65 lines)
+    │   ├── buttonVariants (cva configuration)
+    │   └── Button component
+    ├── card.tsx (59 lines)
+    │   ├── Card
+    │   ├── CardHeader
+    │   ├── CardTitle
+    │   ├── CardDescription
+    │   └── CardContent
+    ├── input.tsx (22 lines)
+    │   └── Input component
+    ├── label.tsx (22 lines)
+    │   └── Label component
+    └── hover-card.tsx (45 lines)
+        ├── HoverCard (root)
+        ├── HoverCardTrigger
+        └── HoverCardContent
 ```
