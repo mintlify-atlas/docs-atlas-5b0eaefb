@@ -1,0 +1,61 @@
+{
+  "projectType": "saas",
+  "projectName": "QRcodeer",
+  "projectDescription": "A free, easy-to-use QR code generator with customizable sizes and center logo support",
+  "theme": "almond",
+  "primaryColor": "#6366f1",
+  "lightColor": "#818cf8",
+  "darkColor": "#4f46e5",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": [
+          "introduction",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Features",
+        "pages": [
+          "features/qr-generation",
+          "features/customization",
+          "features/download-options",
+          "features/theming"
+        ]
+      },
+      {
+        "group": "Component Reference",
+        "pages": [
+          "components/qr-generator",
+          "components/theme-provider",
+          "components/ui-components"
+        ]
+      },
+      {
+        "group": "Resources",
+        "pages": [
+          "resources/faq",
+          "resources/best-practices"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Generate QR codes from text or URLs",
+    "Customizable sizes (128px, 256px, 512px)",
+    "Optional center logo/image overlay",
+    "PNG download with high quality",
+    "Dark and light theme support",
+    "No signup required, completely free"
+  ],
+  "publicApiSurface": [
+    "QrGenerator - Main QR code generation component",
+    "ThemeProvider - Theme management provider",
+    "ThemeToggle - Dark/light mode toggle",
+    "Button, Card, Input, Label - UI components",
+    "QRCodeSVG - QR code rendering (via qrcode.react)",
+    "handleDownloadPng() - PNG export functionality",
+    "SIZE_OPTIONS - Available QR code sizes (128, 256, 512)"
+  ]
+}
