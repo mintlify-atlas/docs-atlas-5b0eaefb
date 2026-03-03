@@ -1,0 +1,203 @@
+---
+title: Download & Export
+description: Download your QR codes as high-quality PNG images ready for print or digital use
+---
+
+## PNG Download
+
+QRcodeer exports your QR codes as PNG (Portable Network Graphics) images, the industry standard for QR codes.
+
+### How to Download
+
+1. Enter your content and customize your QR code
+2. Click the **Download PNG** button below the preview
+3. Your browser saves the file as `qrcode.png`
+4. The image is ready to use immediately
+
+<Info>
+The download button is disabled until you enter content in the QR code field.
+</Info>
+
+## Canvas Conversion Process
+
+QRcodeer uses a sophisticated conversion process to ensure perfect quality:
+
+### Step 1: SVG Preparation
+
+The QR code is initially rendered as an SVG (Scalable Vector Graphics) for perfect quality at any size. During download:
+
+1. The SVG element is cloned from the preview
+2. The center `<image>` element is removed from the clone (if present)
+3. The SVG is serialized to an XML string
+4. A blob URL is created for the SVG data
+
+<Note>
+The center image is removed from the SVG clone because it will be drawn separately on the canvas for better quality control.
+</Note>
+
+### Step 2: Canvas Rendering
+
+A temporary HTML canvas is created in memory:
+
+- Canvas dimensions match your selected size (128px, 256px, or 512px)
+- A white background is drawn first (`#ffffff`)
+- The QR code SVG is drawn onto the canvas
+- If you have a center logo, it's drawn on top with precise positioning
+
+### Step 3: PNG Generation
+
+The canvas is converted to PNG format:
+
+- `canvas.toDataURL('image/png')` generates a data URL
+- A temporary download link is created
+- The file downloads as `qrcode.png`
+- Temporary URLs are cleaned up to free memory
+
+## Image Quality & Resolution
+
+### Resolution Details
+
+<CardGroup cols={3}>
+  <Card title="128 x 128">
+    **Small Size**
+    
+    - File size: ~1-3 KB
+    - Use case: Digital only
+    - Print quality: Up to 0.5 inch
+  </Card>
+  
+  <Card title="256 x 256">
+    **Medium Size** (Default)
+    
+    - File size: ~2-6 KB
+    - Use case: Print & digital
+    - Print quality: Up to 1 inch
+  </Card>
+  
+  <Card title="512 x 512">
+    **Large Size**
+    
+    - File size: ~4-12 KB
+    - Use case: Large format
+    - Print quality: Up to 2 inches
+  </Card>
+</CardGroup>
+
+### Print Quality Guidelines
+
+For professional printing:
+
+- **300 DPI** is standard print resolution
+- **128px** = 0.43 inch at 300 DPI
+- **256px** = 0.85 inch at 300 DPI
+- **512px** = 1.7 inch at 300 DPI
+
+<Tip>
+For larger print sizes, use the 512px option. You can also scale the PNG in professional design software if needed.
+</Tip>
+
+## Background Color
+
+All downloaded QR codes have:
+
+- **Background**: White (`#ffffff`)
+- **Foreground**: Black (`#000000`)
+
+These colors provide:
+- Maximum contrast for scanner reliability
+- Compatibility with all QR readers
+- Clean, professional appearance
+- Easy integration into designs (you can crop or overlay as needed)
+
+<Info>
+White background is added programmatically during PNG generation to ensure consistency across light and dark theme modes.
+</Info>
+
+## Center Logo in Downloads
+
+If you've added a center image:
+
+1. **Logo is included** in the downloaded PNG
+2. **Positioned precisely** at the center of the QR code
+3. **Sized correctly** at 20% of the QR code dimensions
+4. **High quality** - Redrawn on the canvas for crisp output
+
+### Logo Positioning
+
+The center logo is positioned using exact calculations:
+
+```text
+Logo size = QR code size × 0.2
+Logo X position = (QR code size - Logo size) / 2
+Logo Y position = (QR code size - Logo size) / 2
+```
+
+This ensures perfect centering in the exported image.
+
+## File Naming
+
+All downloads are saved as:
+
+```
+qrcode.png
+```
+
+<Tip>
+Rename your downloaded files to keep them organized, especially when generating multiple QR codes. For example: `menu-qr-code.png` or `business-card-qr.png`
+</Tip>
+
+## Browser Compatibility
+
+The download process works in all modern browsers:
+
+- Chrome / Edge (Chromium)
+- Firefox
+- Safari
+- Opera
+- Mobile browsers
+
+The process uses standard Web APIs:
+- `HTMLCanvasElement.toDataURL()` - PNG generation
+- `URL.createObjectURL()` - Temporary file URLs
+- `<a>` element with `download` attribute - File saving
+
+## Privacy & Security
+
+<Info>
+Your QR codes are generated entirely in your browser. No data is sent to any server.
+</Info>
+
+- Content never leaves your device
+- Images are processed locally
+- No upload or cloud storage
+- No tracking or analytics on content
+- Complete privacy guaranteed
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Download button is disabled">
+    Make sure you've entered content in the "Content" field. The button only activates when the QR code has data to encode.
+  </Accordion>
+  
+  <Accordion title="Logo missing in download">
+    If your center logo doesn't appear in the downloaded PNG:
+    - Check that the image uploaded successfully (file name should appear)
+    - Try re-uploading the image
+    - Ensure you entered content (logos only show with valid QR content)
+  </Accordion>
+  
+  <Accordion title="Quality issues when printed">
+    If your QR code looks pixelated when printed:
+    - Use the 512px size option for prints larger than 1 inch
+    - Ensure your printer is set to high quality
+    - Consider upscaling in design software for very large prints
+  </Accordion>
+  
+  <Accordion title="File won't download">
+    If the download doesn't start:
+    - Check browser popup blocker settings
+    - Try a different browser
+    - Ensure JavaScript is enabled
+  </Accordion>
+</AccordionGroup>

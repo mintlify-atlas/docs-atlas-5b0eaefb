@@ -1,0 +1,311 @@
+---
+title: ThemeProvider Component
+description: Theme management wrapper using next-themes for dark/light mode support
+---
+
+## Overview
+
+The `ThemeProvider` component is a lightweight wrapper around `next-themes` that enables theme switching functionality throughout the QRcodeer application. Despite the name suggesting Next.js, the `next-themes` package works with any React application.
+
+Located in `src/components/providers/theme-provider.tsx`, this component:
+- Wraps the entire application to provide theme context
+- Supports system theme detection
+- Persists theme preferences
+- Prevents flash of unstyled content on page load
+
+## Source Code
+
+```tsx
+import * as React from 'react'
+import { ThemeProvider as NextThemesProvider } from 'next-themes'
+
+type ThemeProviderProps = React.ComponentProps<typeof NextThemesProvider>
+
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+}
+```
+
+## Props
+
+The component accepts all props from `next-themes`'s `ThemeProvider`. The type is extracted directly:
+
+```tsx
+type ThemeProviderProps = React.ComponentProps<typeof NextThemesProvider>
+```
+
+### Common Props (from next-themes)
+
+<ParamField path="attribute" type="string" default="data-theme">
+  HTML attribute to use for storing the theme. In QRcodeer, this is set to `"class"` to use class-based theme switching.
+  
+  ```tsx
+  <ThemeProvider attribute="class">
+  ```
+</ParamField>
+
+<ParamField path="defaultTheme" type="string" default="system">
+  Default theme to use on first load. QRcodeer sets this to `"dark"`.
+  
+  ```tsx
+  <ThemeProvider defaultTheme="dark">
+  ```
+</ParamField>
+
+<ParamField path="enableSystem" type="boolean" default="true">
+  Whether to enable system theme detection. When `true`, users can choose to follow their OS preference.
+  
+  ```tsx
+  <ThemeProvider enableSystem>
+  ```
+</ParamField>
+
+<ParamField path="disableTransitionOnChange" type="boolean" default="false">
+  When `true`, disables CSS transitions when the theme changes to prevent flickering animations.
+  
+  ```tsx
+  <ThemeProvider disableTransitionOnChange>
+  ```
+</ParamField>
+
+<ParamField path="themes" type="string[]" default="['light', 'dark']">
+  Array of theme names. Defaults to light and dark if not specified.
+</ParamField>
+
+<ParamField path="storageKey" type="string" default="theme">
+  LocalStorage key for persisting the theme preference.
+</ParamField>
+
+<ParamField path="children" type="ReactNode" required>
+  The application tree to wrap with theme context.
+</ParamField>
+
+## Usage in App
+
+The `ThemeProvider` wraps the entire application in `src/App.tsx`:
+
+```tsx
+import { ThemeProvider } from '@/components/providers/theme-provider'
+
+function App() {
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="dark"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <div className="min-h-svh flex flex-col">
+        {/* App content */}
+      </div>
+    </ThemeProvider>
+  )
+}
+```
+
+**Configuration breakdown:**
+
+<CodeGroup>
+```tsx attribute="class"
+// Applies theme via className on <html> element
+// Tailwind uses this to apply dark: variants
+<html class="dark">
+```
+
+```tsx defaultTheme="dark"
+// Sets dark mode as the default on first visit
+// User preference overrides this after first selection
+```
+
+```tsx enableSystem
+// Allows users to select "System" theme option
+// Follows OS preference (prefers-color-scheme)
+```
+
+```tsx disableTransitionOnChange
+// Prevents CSS transitions during theme switch
+// Avoids jarring color animations
+```
+</CodeGroup>
+
+## How Theme Switching Works
+
+<Steps>
+  <Step title="Initialization">
+    On mount, `next-themes` reads the theme from localStorage (key: `"theme"`) or uses the `defaultTheme`.
+  </Step>
+  
+  <Step title="System Detection">
+    If `enableSystem` is true and no preference is stored, it detects the OS theme using `window.matchMedia('(prefers-color-scheme: dark)')`.
+  </Step>
+  
+  <Step title="Class Application">
+    The selected theme is applied as a class on the `<html>` element:
+    ```html
+    <html class="dark">
+    ```
+  </Step>
+  
+  <Step title="CSS Targeting">
+    Tailwind's `dark:` variant targets this class:
+    ```css
+    .dark .dark\:bg-background {
+      background-color: hsl(var(--background));
+    }
+    ```
+  </Step>
+  
+  <Step title="Persistence">
+    When the user changes theme (via ThemeToggle), the new value is saved to localStorage and the class is updated.
+  </Step>
+</Steps>
+
+## Consuming the Theme
+
+Other components can access theme state using the `useTheme` hook from `next-themes`:
+
+```tsx
+import { useTheme } from 'next-themes'
+
+function ThemeToggle() {
+  const { theme, setTheme, systemTheme } = useTheme()
+  
+  return (
+    <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
+      Toggle theme
+    </button>
+  )
+}
+```
+
+### useTheme Hook API
+
+<ParamField path="theme" type="string | undefined">
+  Currently active theme name (`'light'`, `'dark'`, or `'system'`).
+</ParamField>
+
+<ParamField path="setTheme" type="(theme: string) => void">
+  Function to change the theme. Automatically updates localStorage and DOM.
+</ParamField>
+
+<ParamField path="systemTheme" type="'light' | 'dark' | undefined">
+  The actual OS theme, useful when `theme === 'system'`.
+</ParamField>
+
+<ParamField path="themes" type="string[]">
+  Array of available theme names.
+</ParamField>
+
+<ParamField path="resolvedTheme" type="'light' | 'dark' | undefined">
+  The theme currently applied to the page. If `theme === 'system'`, this returns the actual system theme.
+</ParamField>
+
+## Integration with Tailwind CSS
+
+The `attribute="class"` configuration works with Tailwind's dark mode strategy. In `tailwind.config.js`:
+
+```js
+module.exports = {
+  darkMode: 'class', // Uses class-based dark mode
+  // ...
+}
+```
+
+This allows using dark mode variants throughout the app:
+
+```tsx
+<div className="bg-white dark:bg-gray-900">
+  <p className="text-gray-900 dark:text-gray-100">
+    This text adapts to the theme
+  </p>
+</div>
+```
+
+## Why Wrap next-themes?
+
+While the wrapper appears minimal, it provides several benefits:
+
+<CardGroup cols={2}>
+  <Card title="Type Safety" icon="shield">
+    Centralizes the prop types for easier refactoring and autocomplete.
+  </Card>
+  
+  <Card title="Abstraction" icon="box">
+    If you need to swap theming libraries, only this file needs to change.
+  </Card>
+  
+  <Card title="Consistency" icon="code">
+    Import from your own components rather than third-party packages directly.
+  </Card>
+  
+  <Card title="Extensibility" icon="puzzle">
+    Easy to add custom logic (analytics, persistence, etc.) in the future.
+  </Card>
+</CardGroup>
+
+## Dependencies
+
+<Card title="next-themes" icon="moon">
+  ```bash
+  npm install next-themes
+  ```
+  
+  Provider for theme management in React applications. Works with Next.js, Vite, Create React App, etc.
+  
+  [Documentation](https://github.com/pacocoursey/next-themes)
+</Card>
+
+## File Structure
+
+```
+src/components/
+└── providers/
+    └── theme-provider.tsx (9 lines)
+        ├── Import NextThemesProvider
+        ├── Type definition (ThemeProviderProps)
+        └── Wrapper component (passes through all props)
+```
+
+## Example: Full Theme Setup
+
+<CodeGroup>
+```tsx App.tsx
+import { ThemeProvider } from '@/components/providers/theme-provider'
+import { ThemeToggle } from '@/components/theme-toggle'
+
+function App() {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      <div className="min-h-screen bg-background text-foreground">
+        <header>
+          <ThemeToggle />
+        </header>
+        <main>{/* Your app */}</main>
+      </div>
+    </ThemeProvider>
+  )
+}
+```
+
+```tsx ThemeToggle.tsx
+import { useTheme } from 'next-themes'
+import { Moon, Sun } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme()
+  
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+    >
+      <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+      <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+      <span className="sr-only">Toggle theme</span>
+    </Button>
+  )
+}
+```
+</CodeGroup>

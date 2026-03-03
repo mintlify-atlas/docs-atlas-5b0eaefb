@@ -1,0 +1,570 @@
+---
+title: UI Component Library
+description: shadcn/ui components used in QRcodeer - Button, Card, Input, Label, and HoverCard
+---
+
+## Overview
+
+QRcodeer uses [shadcn/ui](https://ui.shadcn.com/) components, a collection of reusable components built with Radix UI and Tailwind CSS. These components are copied into your project (not installed as a dependency), giving you full control over the code.
+
+All UI components are located in `src/components/ui/` and follow a consistent pattern:
+- Built with TypeScript for type safety
+- Use `class-variance-authority` (cva) for variant management
+- Accept standard HTML props via `React.ComponentProps`
+- Include `data-slot` attributes for styling hooks
+- Compose with the `cn` utility for className merging
+
+## Button Component
+
+**Location:** `src/components/ui/button.tsx`
+
+A flexible button component with multiple variants and sizes, built using `class-variance-authority`.
+
+### Variants
+
+<ParamField path="variant" type="string" default="default">
+  Visual style of the button:
+  
+  - `default` - Primary blue background
+  - `destructive` - Red background for dangerous actions
+  - `outline` - Bordered with transparent background
+  - `secondary` - Muted background color
+  - `ghost` - No background, hover state only
+  - `link` - Text with underline on hover
+</ParamField>
+
+<ParamField path="size" type="string" default="default">
+  Size of the button:
+  
+  - `default` - 9 units tall (h-9)
+  - `xs` - Extra small (h-6)
+  - `sm` - Small (h-8)
+  - `lg` - Large (h-10)
+  - `icon` - Square 9x9 units
+  - `icon-xs` - Small icon (6x6)
+  - `icon-sm` - Medium icon (8x8)
+  - `icon-lg` - Large icon (10x10)
+</ParamField>
+
+<ParamField path="asChild" type="boolean" default="false">
+  When `true`, uses Radix UI's `Slot` to render the button as a child element. Useful for creating link buttons:
+  
+  ```tsx
+  <Button asChild>
+    <a href="/about">About</a>
+  </Button>
+  ```
+</ParamField>
+
+### Props Interface
+
+```tsx
+type ButtonProps = React.ComponentProps<"button"> & 
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }
+```
+
+Accepts all standard HTML button attributes plus variant props.
+
+### Usage Examples
+
+<CodeGroup>
+```tsx Default Button
+import { Button } from '@/components/ui/button'
+
+<Button onClick={() => console.log('clicked')}>
+  Click me
+</Button>
+```
+
+```tsx Variants
+<Button variant="default">Primary</Button>
+<Button variant="destructive">Delete</Button>
+<Button variant="outline">Cancel</Button>
+<Button variant="ghost">Ghost</Button>
+<Button variant="link">Learn more</Button>
+```
+
+```tsx Sizes
+<Button size="xs">Extra Small</Button>
+<Button size="sm">Small</Button>
+<Button size="default">Default</Button>
+<Button size="lg">Large</Button>
+```
+
+```tsx Icon Buttons
+import { Download } from 'lucide-react'
+
+<Button size="icon" variant="outline">
+  <Download className="h-4 w-4" />
+</Button>
+```
+
+```tsx With Icon and Text
+import { Download } from 'lucide-react'
+
+<Button className="gap-2">
+  <Download className="h-4 w-4" />
+  Download PNG
+</Button>
+```
+</CodeGroup>
+
+### Button Variants Implementation
+
+```tsx
+const buttonVariants = cva(
+  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  {
+    variants: {
+      variant: { /* ... */ },
+      size: { /* ... */ }
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+```
+
+## Card Components
+
+**Location:** `src/components/ui/card.tsx`
+
+A set of components for building card layouts. The card system includes five sub-components:
+
+### Card
+
+The root container for card content.
+
+```tsx
+function Card({ className, ...props }: React.ComponentProps<'div'>)
+```
+
+**Default Styles:**
+- `bg-card text-card-foreground` - Card background and text color
+- `flex flex-col gap-6` - Flexbox layout with spacing
+- `rounded-xl border py-6 shadow-sm` - Rounded corners, border, padding, shadow
+
+### CardHeader
+
+Container for the card's title and description area.
+
+```tsx
+function CardHeader({ className, ...props }: React.ComponentProps<'div'>)
+```
+
+**Default Styles:**
+- `grid items-start gap-2 px-6` - Grid layout with horizontal padding
+
+### CardTitle
+
+The main heading of the card.
+
+```tsx
+function CardTitle({ className, ...props }: React.ComponentProps<'div'>)
+```
+
+**Default Styles:**
+- `leading-none font-semibold` - Tight line height, bold text
+
+### CardDescription
+
+Optional descriptive text below the title.
+
+```tsx
+function CardDescription({ className, ...props }: React.ComponentProps<'div'>)
+```
+
+**Default Styles:**
+- `text-muted-foreground text-sm` - Muted color, small text
+
+### CardContent
+
+The main content area of the card.
+
+```tsx
+function CardContent({ className, ...props }: React.ComponentProps<'div'>)
+```
+
+**Default Styles:**
+- `px-6` - Horizontal padding matching CardHeader
+
+### Card Usage Example
+
+```tsx
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card'
+
+<Card>
+  <CardHeader>
+    <CardTitle>QR code generator</CardTitle>
+    <CardDescription>
+      Enter text or a URL, optionally add a center image, then download.
+    </CardDescription>
+  </CardHeader>
+  <CardContent>
+    {/* Your content here */}
+  </CardContent>
+</Card>
+```
+
+This is the exact structure used in `qr-generator.tsx:112-242`.
+
+## Input Component
+
+**Location:** `src/components/ui/input.tsx`
+
+A styled text input field with focus states and validation styling.
+
+### Props
+
+```tsx
+type InputProps = React.ComponentProps<'input'>
+```
+
+Accepts all standard HTML input attributes including `type`, `placeholder`, `value`, `onChange`, etc.
+
+### Features
+
+<ParamField path="type" type="string" default="text">
+  Input type (text, email, password, etc.).
+</ParamField>
+
+<ParamField path="className" type="string">
+  Additional CSS classes merged with defaults using `cn()`.
+</ParamField>
+
+**Built-in States:**
+- Focus ring with blue border (`focus-visible:border-ring`)
+- Error state with red border (`aria-invalid:border-destructive`)
+- File input styling (`file:inline-flex file:h-7`)
+- Disabled state (`disabled:opacity-50`)
+
+### Usage Examples
+
+<CodeGroup>
+```tsx Basic Input
+import { Input } from '@/components/ui/input'
+
+<Input 
+  type="text" 
+  placeholder="Enter text..." 
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+/>
+```
+
+```tsx With Label
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
+<div className="space-y-2">
+  <Label htmlFor="email">Email</Label>
+  <Input 
+    id="email"
+    type="email" 
+    placeholder="you@example.com"
+  />
+</div>
+```
+
+```tsx QRcodeer Example
+<Input
+  id="qr-value"
+  type="text"
+  placeholder="https://example.com or any text..."
+  value={value}
+  onChange={(e) => setValue(e.target.value)}
+  className="h-10 font-mono text-sm placeholder:font-sans"
+/>
+```
+</CodeGroup>
+
+### Input Styling Classes
+
+```tsx
+className={cn(
+  'border-input placeholder:text-muted-foreground',
+  'h-9 w-full min-w-0 border bg-transparent px-3 py-1',
+  'text-base shadow-xs outline-none transition-[color,box-shadow]',
+  'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
+  'aria-invalid:border-destructive aria-invalid:ring-destructive/20',
+  'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+  className
+)}
+```
+
+## Label Component
+
+**Location:** `src/components/ui/label.tsx`
+
+A simple label component for form fields.
+
+### Props
+
+```tsx
+type LabelProps = React.ComponentProps<'label'>
+```
+
+Accepts all standard HTML label attributes including `htmlFor`, `onClick`, etc.
+
+### Default Styling
+
+```tsx
+className={cn(
+  'text-sm font-medium leading-none select-none',
+  'peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
+  className
+)}
+```
+
+**Features:**
+- Small text size (`text-sm`)
+- Medium font weight (`font-medium`)
+- Non-selectable text (`select-none`)
+- Disabled state when associated input is disabled (`peer-disabled:opacity-50`)
+
+### Usage Examples
+
+<CodeGroup>
+```tsx Basic Label
+import { Label } from '@/components/ui/label'
+
+<Label htmlFor="username">Username</Label>
+<Input id="username" type="text" />
+```
+
+```tsx Without htmlFor
+<Label className="text-foreground/90">Size</Label>
+<div className="flex gap-2">
+  <Button variant="outline">128px</Button>
+  <Button variant="outline">256px</Button>
+</div>
+```
+</CodeGroup>
+
+## HoverCard Component
+
+**Location:** `src/components/ui/hover-card.tsx`
+
+A hover-activated popover component built with Radix UI. Displays additional content when hovering over a trigger element.
+
+### Components
+
+The HoverCard system includes three sub-components:
+
+#### HoverCard (Root)
+
+The root wrapper that manages hover state.
+
+```tsx
+function HoverCard(
+  props: React.ComponentProps<typeof HoverCardPrimitive.Root>
+)
+```
+
+<ParamField path="openDelay" type="number" default="700">
+  Delay in milliseconds before opening.
+</ParamField>
+
+<ParamField path="closeDelay" type="number" default="300">
+  Delay in milliseconds before closing.
+</ParamField>
+
+#### HoverCardTrigger
+
+The element that triggers the hover card.
+
+```tsx
+function HoverCardTrigger(
+  props: React.ComponentProps<typeof HoverCardPrimitive.Trigger>
+)
+```
+
+#### HoverCardContent
+
+The content displayed in the popover.
+
+```tsx
+function HoverCardContent({
+  className,
+  align = 'center',
+  sideOffset = 4,
+  ...props
+}: React.ComponentProps<typeof HoverCardPrimitive.Content>)
+```
+
+<ParamField path="align" type="'start' | 'center' | 'end'" default="center">
+  Horizontal alignment relative to the trigger.
+</ParamField>
+
+<ParamField path="sideOffset" type="number" default="4">
+  Distance in pixels from the trigger element.
+</ParamField>
+
+<ParamField path="side" type="'top' | 'right' | 'bottom' | 'left'">
+  Which side of the trigger to display on.
+</ParamField>
+
+### Usage Example
+
+```tsx
+import { 
+  HoverCard, 
+  HoverCardTrigger, 
+  HoverCardContent 
+} from '@/components/ui/hover-card'
+
+<HoverCard>
+  <HoverCardTrigger asChild>
+    <button>Hover me</button>
+  </HoverCardTrigger>
+  <HoverCardContent className="w-80">
+    <div className="space-y-2">
+      <h4 className="text-sm font-semibold">Additional Info</h4>
+      <p className="text-sm text-muted-foreground">
+        This content appears on hover.
+      </p>
+    </div>
+  </HoverCardContent>
+</HoverCard>
+```
+
+### Animation Classes
+
+The HoverCardContent includes smooth animations:
+
+```tsx
+className={cn(
+  'z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none',
+  'data-[state=open]:animate-in data-[state=closed]:animate-out',
+  'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+  'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+  'data-[side=bottom]:slide-in-from-top-2',
+  'data-[side=left]:slide-in-from-right-2',
+  'data-[side=right]:slide-in-from-left-2',
+  'data-[side=top]:slide-in-from-bottom-2',
+  className
+)}
+```
+
+## Common Utilities
+
+### cn() Helper
+
+All UI components use the `cn()` utility from `@/lib/utils` for className composition:
+
+```tsx
+import { cn } from '@/lib/utils'
+
+<Button className={cn("custom-class", className)} />
+```
+
+This utility (built with `clsx` and `tailwind-merge`) handles:
+- Conditional classes
+- Merging Tailwind classes without conflicts
+- Removing duplicate classes
+
+### data-slot Attributes
+
+All components include `data-slot` attributes for styling hooks:
+
+```tsx
+<button data-slot="button" data-variant="outline" data-size="sm">
+  Click me
+</button>
+```
+
+These can be used for global styling or testing selectors:
+
+```css
+[data-slot="button"][data-variant="destructive"] {
+  /* Custom styles */
+}
+```
+
+## Component Props Pattern
+
+All UI components follow this pattern:
+
+```tsx
+function Component({ 
+  className, 
+  variant, 
+  size, 
+  ...props 
+}: React.ComponentProps<'element'> & CustomProps) {
+  return (
+    <element 
+      className={cn(baseStyles, variantStyles, className)} 
+      {...props} 
+    />
+  )
+}
+```
+
+This allows:
+- Full HTML attribute support
+- Custom variant props
+- className override
+- TypeScript autocomplete
+
+## Dependencies
+
+<CardGroup cols={2}>
+  <Card title="class-variance-authority" icon="palette">
+    ```bash
+    npm install class-variance-authority
+    ```
+    Variant management for Button component.
+  </Card>
+  
+  <Card title="@radix-ui/react-hover-card" icon="square">
+    ```bash
+    npm install @radix-ui/react-hover-card
+    ```
+    Accessible HoverCard primitive.
+  </Card>
+  
+  <Card title="radix-ui" icon="component">
+    ```bash
+    npm install radix-ui
+    ```
+    Slot component for asChild functionality.
+  </Card>
+  
+  <Card title="Tailwind CSS" icon="wind">
+    Required for all styling. See [Tailwind documentation](https://tailwindcss.com).
+  </Card>
+</CardGroup>
+
+## File Structure
+
+```
+src/components/ui/
+├── button.tsx (65 lines)
+│   ├── buttonVariants (cva configuration)
+│   └── Button component
+├── card.tsx (59 lines)
+│   ├── Card
+│   ├── CardHeader
+│   ├── CardTitle
+│   ├── CardDescription
+│   └── CardContent
+├── input.tsx (22 lines)
+│   └── Input component
+├── label.tsx (22 lines)
+│   └── Label component
+└── hover-card.tsx (45 lines)
+    ├── HoverCard (root)
+    ├── HoverCardTrigger
+    └── HoverCardContent
+```

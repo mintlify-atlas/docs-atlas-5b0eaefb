@@ -1,0 +1,97 @@
+---
+title: QR Code Generation
+description: Generate QR codes instantly from any text or URL with customizable error correction
+---
+
+## How It Works
+
+QRcodeer generates QR codes in real-time as you type. Simply enter any text or URL in the content field, and your QR code appears instantly in the preview area.
+
+### Supported Content Types
+
+You can create QR codes from:
+
+- **URLs** - Website links, social media profiles, online forms
+- **Plain Text** - Contact information, messages, Wi-Fi credentials
+- **Email Addresses** - Quick mailto links
+- **Phone Numbers** - Tap-to-call functionality
+- **Any Text Content** - The QR code library supports any UTF-8 text
+
+<Info>
+QR codes can store up to several thousand characters, but shorter content produces simpler, more scannable codes.
+</Info>
+
+## Error Correction Levels
+
+QRcodeer automatically adjusts the error correction level based on your customization:
+
+<Tabs>
+  <Tab title="Standard (Level M)">
+    Used for basic QR codes without a center image.
+    
+    - **Recovery Rate**: ~15% of data can be restored if damaged
+    - **Best For**: Simple URLs and text
+    - **Code Density**: Moderate
+  </Tab>
+  <Tab title="High (Level H)">
+    Automatically activated when you add a center image/logo.
+    
+    - **Recovery Rate**: ~30% of data can be restored if damaged
+    - **Best For**: QR codes with branding or logos
+    - **Code Density**: Higher (more modules)
+    
+    <Note>
+    Level H error correction ensures your QR code remains scannable even with a logo covering the center.
+    </Note>
+  </Tab>
+</Tabs>
+
+## Real-World Use Cases
+
+<AccordionGroup>
+  <Accordion title="Business Cards">
+    Create a QR code linking to your LinkedIn profile, portfolio website, or digital contact card (vCard). Add your company logo in the center for brand recognition.
+  </Accordion>
+  
+  <Accordion title="Restaurant Menus">
+    Generate QR codes for your online menu. Customers can scan from table tents or window displays to view your offerings instantly.
+  </Accordion>
+  
+  <Accordion title="Event Registration">
+    Link to registration forms, ticket pages, or event details. Add event branding with a center logo.
+  </Accordion>
+  
+  <Accordion title="Product Packaging">
+    Direct customers to product manuals, warranty registration, or support resources. Include your product or brand logo.
+  </Accordion>
+  
+  <Accordion title="Wi-Fi Sharing">
+    Create QR codes with Wi-Fi credentials so guests can connect without typing passwords.
+  </Accordion>
+  
+  <Accordion title="Social Media">
+    Link directly to your Instagram, Twitter, Facebook, or other social profiles for easy following.
+  </Accordion>
+</AccordionGroup>
+
+## Live Preview
+
+Every change updates the preview immediately:
+
+- Type or paste your content in the input field
+- The QR code regenerates instantly
+- See exactly what your final QR code will look like
+- Test different content before downloading
+
+<Tip>
+The preview uses the exact same rendering as your downloaded PNG, so what you see is what you get.
+</Tip>
+
+## Technical Details
+
+QRcodeer uses the `qrcode.react` library to generate high-quality SVG-based QR codes that are:
+
+- **Scalable** - Vector graphics remain crisp at any size
+- **Fast** - Instant generation with no server requests
+- **Accurate** - Industry-standard QR code encoding
+- **Accessible** - Properly labeled for screen readers

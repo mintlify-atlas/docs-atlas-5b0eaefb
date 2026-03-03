@@ -1,0 +1,154 @@
+---
+title: Customization Options
+description: Customize your QR code with different sizes and add your logo or brand image to the center
+---
+
+## QR Code Sizes
+
+Choose from three preset sizes optimized for different use cases:
+
+<CardGroup cols={3}>
+  <Card title="128px" icon="mobile">
+    **Small**
+    
+    Perfect for:
+    - Email signatures
+    - Small print materials
+    - Digital use only
+  </Card>
+  
+  <Card title="256px" icon="file">
+    **Medium** (Default)
+    
+    Perfect for:
+    - Business cards
+    - Flyers and posters
+    - Social media posts
+    - General purpose
+  </Card>
+  
+  <Card title="512px" icon="print">
+    **Large**
+    
+    Perfect for:
+    - Banners and signage
+    - Large format printing
+    - High-resolution needs
+    - Billboard displays
+  </Card>
+</CardGroup>
+
+<Info>
+All sizes are in pixels. The downloaded PNG matches the selected size exactly.
+</Info>
+
+## Center Image Feature
+
+Add your logo or brand image to the center of any QR code for professional, branded results.
+
+### How to Add a Logo
+
+1. Click the **Upload image** button in the "Center image" section
+2. Select any image file from your device
+3. The logo appears instantly in the QR code preview
+4. Click **Remove** to clear the logo if needed
+
+<Tip>
+For best results, use square logos with transparent backgrounds (PNG format).
+</Tip>
+
+### Logo Size Ratio
+
+The center logo is automatically sized at **20% of the QR code dimensions**:
+
+| QR Code Size | Logo Size | Percentage |
+|--------------|-----------|------------|
+| 128px        | 26px      | 20%        |
+| 256px        | 51px      | 20%        |
+| 512px        | 102px     | 20%        |
+
+This ratio is carefully chosen to:
+- Maintain QR code scannability
+- Provide visible branding
+- Work with High (H) error correction
+- Balance aesthetics and function
+
+## Excavation Technology
+
+<Note>
+Excavation is the process of clearing space in the QR code pattern for your center image.
+</Note>
+
+When you add a center logo, QRcodeer automatically:
+
+1. **Clears the Center Area** - Removes QR code modules where the logo will appear
+2. **Preserves Readability** - Uses High (H) error correction to compensate for the missing data
+3. **Maintains Structure** - Keeps alignment patterns and timing strips intact
+4. **Ensures Scanning** - The QR code remains fully scannable by all standard readers
+
+### How Excavation Works
+
+The `qrcode.react` library handles excavation automatically when you provide an image:
+
+- **Without excavation**: Logo overlays the QR pattern (may interfere with scanning)
+- **With excavation**: QR pattern is cleared beneath the logo (guaranteed scannability)
+
+QRcodeer always enables excavation when a center image is present.
+
+## Image Upload Process
+
+When you upload an image:
+
+1. **File Validation** - Only image files are accepted (`image/*` MIME types)
+2. **Object URL Creation** - Your image is loaded into browser memory (never uploaded to a server)
+3. **Instant Preview** - The logo appears immediately in the QR code
+4. **Memory Management** - Previous images are properly cleaned up to prevent memory leaks
+
+<Info>
+All processing happens locally in your browser. Your images never leave your device.
+</Info>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Logo Design">
+    - Use simple, recognizable logos
+    - Avoid excessive detail that won't show at small sizes
+    - High contrast works best (dark logo on light QR, or vice versa)
+    - Square or circular logos work better than wide rectangles
+  </Accordion>
+  
+  <Accordion title="File Formats">
+    Supported formats:
+    - **PNG** - Best for logos with transparency
+    - **JPG/JPEG** - Works for photos and complex images
+    - **SVG** - Vector graphics (browser support varies)
+    - **GIF** - Supported but not recommended
+    - **WebP** - Modern format with good compression
+  </Accordion>
+  
+  <Accordion title="Size Selection">
+    - **Small (128px)**: Use for digital-only applications
+    - **Medium (256px)**: Safe default for most print and digital uses
+    - **Large (512px)**: Choose when printing at large sizes or when detail matters
+  </Accordion>
+  
+  <Accordion title="Testing">
+    Always test your QR code before mass printing:
+    - Download and test on your phone
+    - Try multiple QR scanner apps
+    - Test at the actual printed size
+    - Verify the link or content is correct
+  </Accordion>
+</AccordionGroup>
+
+## Removing a Logo
+
+To remove the center image:
+
+1. Click the **Remove** button next to the file name
+2. The logo disappears from the preview
+3. Error correction automatically switches back to Level M
+4. Upload a different image anytime
+
+The hidden file input field is also reset to allow re-uploading the same file if needed.

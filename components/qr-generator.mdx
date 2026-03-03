@@ -1,0 +1,268 @@
+---
+title: QrGenerator Component
+description: Core QR code generation component with image embedding and PNG export functionality
+---
+
+## Overview
+
+The `QrGenerator` component is the main UI component for generating QR codes in QRcodeer. It provides a complete interface for creating customizable QR codes with optional center images and PNG export functionality.
+
+Located in `src/components/qr-generator.tsx`, this component handles:
+- Text/URL input for QR code content
+- Size selection (128px, 256px, 512px)
+- Center image upload and management
+- Real-time QR code preview
+- PNG export with embedded center image
+
+## Key Features
+
+### State Management
+
+The component uses React hooks for state management:
+
+```tsx
+const [value, setValue] = useState('')
+const [size, setSize] = useState(DEFAULT_SIZE)
+const [centerImageUrl, setCenterImageUrl] = useState<string | null>(null)
+const [centerImageFileName, setCenterImageFileName] = useState<string | null>(null)
+const fileInputRef = useRef<HTMLInputElement>(null)
+const svgRef = useRef<HTMLDivElement>(null)
+```
+
+### Memory Management
+
+The component properly manages object URLs to prevent memory leaks:
+
+```tsx
+useEffect(() => {
+  return () => {
+    if (centerImageUrl) URL.revokeObjectURL(centerImageUrl)
+  }
+}, [centerImageUrl])
+```
+
+## Constants
+
+<ParamField path="SIZE_OPTIONS" type="readonly [128, 256, 512]">
+  Available QR code size options in pixels. Defined as a const tuple for type safety.
+</ParamField>
+
+<ParamField path="DEFAULT_SIZE" type="256">
+  Default QR code size in pixels when the component first loads.
+</ParamField>
+
+<ParamField path="LOGO_SIZE_RATIO" type="0.2">
+  Ratio of center image size to QR code size. A value of 0.2 means the logo is 20% of the QR code dimensions.
+</ParamField>
+
+## State Variables
+
+<ParamField path="value" type="string">
+  The text or URL content to encode in the QR code. Updates in real-time as the user types.
+</ParamField>
+
+<ParamField path="size" type="128 | 256 | 512">
+  Currently selected QR code size in pixels. Defaults to `DEFAULT_SIZE` (256).
+</ParamField>
+
+<ParamField path="centerImageUrl" type="string | null">
+  Object URL for the uploaded center image. Set via `URL.createObjectURL()` when a file is selected.
+</ParamField>
+
+<ParamField path="centerImageFileName" type="string | null">
+  Original filename of the uploaded center image, displayed in the UI.
+</ParamField>
+
+<ParamField path="fileInputRef" type="RefObject<HTMLInputElement>">
+  Reference to the hidden file input element for programmatic triggering.
+</ParamField>
+
+<ParamField path="svgRef" type="RefObject<HTMLDivElement>">
+  Reference to the div containing the QR code SVG, used for PNG export.
+</ParamField>
+
+## Methods
+
+### handleFileChange
+
+Handles file input changes when a user uploads a center image.
+
+```tsx
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0]
+  if (!file?.type.startsWith('image/')) return
+  if (centerImageUrl) URL.revokeObjectURL(centerImageUrl)
+  setCenterImageUrl(URL.createObjectURL(file))
+  setCenterImageFileName(file.name)
+  e.target.value = ''
+}
+```
+
+**Behavior:**
+- Validates that the selected file is an image
+- Revokes previous object URL if it exists
+- Creates new object URL for the uploaded file
+- Stores the filename for display
+- Clears the input value to allow re-uploading the same file
+
+### clearCenterImage
+
+Removes the center image and cleans up associated resources.
+
+```tsx
+const clearCenterImage = () => {
+  if (centerImageUrl) URL.revokeObjectURL(centerImageUrl)
+  setCenterImageUrl(null)
+  setCenterImageFileName(null)
+  fileInputRef.current?.value && (fileInputRef.current.value = '')
+}
+```
+
+**Behavior:**
+- Revokes the object URL to free memory
+- Clears both URL and filename state
+- Resets the file input element
+
+### handleDownloadPng
+
+Exports the QR code as a PNG file with the center image properly embedded.
+
+```tsx
+const handleDownloadPng = () => {
+  const svg = svgRef.current?.querySelector('svg')
+  if (!svg || !value.trim()) return
+
+  // Clone SVG and strip the center <image>
+  const svgClone = svg.cloneNode(true) as SVGElement
+  const imageEl = svgClone.querySelector('image')
+  if (imageEl) imageEl.remove()
+
+  const svgString = new XMLSerializer().serializeToString(svgClone)
+  const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const qrImg = new Image()
+
+  // ... canvas rendering logic
+}
+```
+
+**Export Process:**
+
+<Steps>
+  <Step title="Clone the SVG">
+    Creates a copy of the QR code SVG and removes the embedded `<image>` element to prevent double rendering.
+  </Step>
+  
+  <Step title="Serialize to string">
+    Converts the SVG DOM to a string using `XMLSerializer` and creates a Blob.
+  </Step>
+  
+  <Step title="Draw on canvas">
+    - Creates a canvas element matching the selected size
+    - Fills with white background
+    - Draws the QR code pattern from the SVG
+    - If a center image exists, calculates position and draws it at the center
+  </Step>
+  
+  <Step title="Export PNG">
+    Converts the canvas to a PNG data URL and triggers download as `qrcode.png`.
+  </Step>
+</Steps>
+
+**Logo positioning calculation:**
+
+```tsx
+const logoSize = Math.round(size * LOGO_SIZE_RATIO)
+const logoX = (size - logoSize) / 2
+const logoY = (size - logoSize) / 2
+```
+
+## QR Code Configuration
+
+The component uses `qrcode.react` with the following configuration:
+
+<ParamField path="value" type="string">
+  The content to encode (trimmed to remove whitespace).
+</ParamField>
+
+<ParamField path="size" type="number">
+  QR code dimensions in pixels (128, 256, or 512).
+</ParamField>
+
+<ParamField path="level" type="'H' | 'M'">
+  Error correction level. Uses 'H' (High, ~30%) when a center image is present to ensure scannability, otherwise 'M' (Medium, ~15%).
+</ParamField>
+
+<ParamField path="marginSize" type="0">
+  No margin/quiet zone added to the SVG (handled by UI padding).
+</ParamField>
+
+<ParamField path="bgColor" type="'#ffffff'">
+  White background color.
+</ParamField>
+
+<ParamField path="fgColor" type="'#000000'">
+  Black foreground color for QR modules.
+</ParamField>
+
+<ParamField path="imageSettings" type="object | undefined">
+  Configuration for center image:
+  ```tsx
+  {
+    src: centerImageUrl,
+    height: logoSize,
+    width: logoSize,
+    excavate: true, // Clears QR modules behind the image
+  }
+  ```
+  Only present when `centerImageUrl` exists and content is not empty.
+</ParamField>
+
+## Usage Example
+
+```tsx
+import { QrGenerator } from '@/components/qr-generator'
+
+function App() {
+  return (
+    <main className="flex items-center justify-center p-4">
+      <QrGenerator />
+    </main>
+  )
+}
+```
+
+The component is self-contained and requires no props. All state is managed internally.
+
+## Dependencies
+
+<CardGroup cols={2}>
+  <Card title="qrcode.react" icon="qrcode">
+    `QRCodeSVG` component for rendering QR codes as SVG elements.
+  </Card>
+  
+  <Card title="lucide-react" icon="image">
+    Icons: `Download`, `ImagePlus`, `X`
+  </Card>
+  
+  <Card title="UI Components" icon="puzzle-piece">
+    Card, Input, Label, Button from `@/components/ui`
+  </Card>
+  
+  <Card title="Utilities" icon="wrench">
+    `cn` helper from `@/lib/utils` for className composition
+  </Card>
+</CardGroup>
+
+## File Structure
+
+```
+src/components/
+└── qr-generator.tsx (246 lines)
+    ├── Constants (SIZE_OPTIONS, DEFAULT_SIZE, LOGO_SIZE_RATIO)
+    ├── State hooks (value, size, centerImageUrl, centerImageFileName)
+    ├── Refs (fileInputRef, svgRef)
+    ├── Effects (URL cleanup)
+    ├── Event handlers (handleFileChange, clearCenterImage, handleDownloadPng)
+    └── JSX render (Card-based UI with QRCodeSVG)
+```

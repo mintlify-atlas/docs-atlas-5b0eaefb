@@ -1,0 +1,252 @@
+---
+title: Theme Support
+description: Switch between dark and light modes with automatic theme persistence and system detection
+---
+
+## Dark & Light Modes
+
+QRcodeer supports both dark and light themes to match your preference and reduce eye strain.
+
+### Theme Toggle
+
+Switch themes using the toggle button in the top-right corner of the app:
+
+- **Sun Icon**: Click to switch to light mode
+- **Moon Icon**: Click to switch to dark mode
+- Themes change instantly with no page reload
+
+<Tip>
+The theme toggle is always visible in the header for quick access.
+</Tip>
+
+## Default Theme
+
+When you first visit QRcodeer:
+
+- **Dark mode** is the default theme
+- Unless your system preference is set to light mode
+- System detection overrides the default on first visit
+
+<Info>
+After your first manual theme change, your selection is remembered and system detection is bypassed.
+</Info>
+
+## Theme Persistence
+
+Your theme preference is automatically saved:
+
+- Stored in browser localStorage
+- Persists across browser sessions
+- Survives page refreshes
+- Works per-device (doesn't sync across devices)
+
+### How It Works
+
+QRcodeer uses the `next-themes` library for theme management:
+
+1. Your choice is saved to `localStorage` immediately
+2. On subsequent visits, the saved theme loads before the page renders
+3. No flash of wrong theme (FOUT prevention)
+4. Smooth, instant theme application
+
+## System Theme Detection
+
+QRcodeer can automatically match your operating system theme:
+
+### Enabling System Detection
+
+The app is configured with:
+
+```jsx
+<ThemeProvider
+  attribute="class"
+  defaultTheme="dark"
+  enableSystem
+  disableTransitionOnChange
+>
+```
+
+- **`enableSystem`**: Allows detection of your OS theme preference
+- **`defaultTheme="dark"`**: Falls back to dark mode if no system preference
+- **`attribute="class"`**: Applies theme via CSS class on the `<html>` element
+
+### System Preference Detection
+
+The app detects your system theme from:
+
+- **Windows**: Settings → Personalization → Colors → Choose your mode
+- **macOS**: System Preferences → General → Appearance
+- **Linux**: Desktop environment theme settings
+- **iOS/Android**: Display settings
+
+<Note>
+System detection only applies on first visit or if you clear your browser data. Manual theme selections override system preferences.
+</Note>
+
+## Theme Implementation
+
+QRcodeer's theming system uses:
+
+### CSS Classes
+
+Themes are applied via a `class` attribute on the root HTML element:
+
+- Light mode: No class or `class="light"`
+- Dark mode: `class="dark"`
+
+CSS variables adjust automatically based on the class:
+
+```css
+/* Light mode - default */
+:root {
+  --background: white;
+  --foreground: black;
+  /* ...other variables */
+}
+
+/* Dark mode */
+.dark {
+  --background: black;
+  --foreground: white;
+  /* ...other variables */
+}
+```
+
+### Theme Provider Setup
+
+The `ThemeProvider` component wraps the entire app in `App.tsx`:
+
+- Initializes theme system on mount
+- Provides `useTheme()` hook to child components
+- Manages theme state and persistence
+- Handles system theme detection
+
+### Smooth Transitions
+
+The `disableTransitionOnChange` prop prevents jarring color transitions:
+
+- Colors change instantly when toggling themes
+- No animated color shifts
+- Clean, professional theme switching
+- Better user experience
+
+## Visual Differences
+
+<Tabs>
+  <Tab title="Dark Mode">
+    Dark mode features:
+    
+    - Dark background with subtle grid pattern
+    - Light text for readability
+    - Reduced blue light for eye comfort
+    - Muted colors for card borders
+    - Ideal for low-light environments
+    - Modern, sleek appearance
+  </Tab>
+  <Tab title="Light Mode">
+    Light mode features:
+    
+    - Light background with subtle grid pattern
+    - Dark text for clarity
+    - High contrast for bright environments
+    - Crisp card borders
+    - Traditional, clean look
+    - Better for printing/screenshots
+  </Tab>
+</Tabs>
+
+## QR Code Preview
+
+<Info>
+The QR code preview always displays with a white background, regardless of theme.
+</Info>
+
+This ensures:
+- Consistent preview appearance
+- Accurate representation of downloaded PNG
+- Proper contrast for QR code modules
+- No theme interference with QR readability
+
+## Accessibility
+
+### Theme Toggle Accessibility
+
+The theme toggle button includes:
+
+- `aria-label="Toggle theme"` for screen readers
+- Keyboard navigation support
+- Visual feedback on hover
+- Clear iconography (sun/moon)
+- High contrast icons in both themes
+
+### Server-Side Rendering (SSR) Handling
+
+The theme toggle includes hydration protection:
+
+- Shows a disabled placeholder until JavaScript loads
+- Prevents hydration mismatches
+- Ensures smooth client-side mounting
+- No flickering during initial load
+
+<Note>
+The `mounted` state ensures the theme toggle only renders interactive elements after the component mounts on the client.
+</Note>
+
+## Background Pattern
+
+Both themes feature a subtle dot grid background pattern:
+
+- **Light mode**: Light gray dots (`#d4d4d4`)
+- **Dark mode**: Dark gray dots (`#404040`)
+- 20px grid spacing
+- Radial gradient pattern
+- Non-intrusive visual texture
+
+## Browser Support
+
+Theme functionality works in all modern browsers:
+
+- Chrome / Edge
+- Firefox
+- Safari
+- Opera
+- Mobile browsers (iOS Safari, Chrome Android)
+
+Requirements:
+- JavaScript enabled
+- localStorage available
+- CSS custom properties support
+- `prefers-color-scheme` media query (for system detection)
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Theme doesn't persist">
+    If your theme resets on every visit:
+    - Check that cookies/localStorage aren't blocked
+    - Disable "Clear cookies on exit" in browser settings
+    - Check for private/incognito mode (may not persist)
+  </Accordion>
+  
+  <Accordion title="Wrong theme loads">
+    If the wrong theme appears on load:
+    - Clear your browser cache and localStorage
+    - Check system theme settings if you haven't manually selected a theme
+    - Try manually toggling the theme
+  </Accordion>
+  
+  <Accordion title="Flash of wrong theme">
+    If you see a brief flash of the wrong theme:
+    - This is usually unavoidable without SSR
+    - The app minimizes this with proper theme initialization
+    - Clear cache if the issue persists
+  </Accordion>
+  
+  <Accordion title="Theme toggle not working">
+    If clicking the theme toggle does nothing:
+    - Ensure JavaScript is enabled
+    - Check browser console for errors
+    - Try refreshing the page
+    - Test in a different browser
+  </Accordion>
+</AccordionGroup>

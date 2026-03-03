@@ -1,0 +1,223 @@
+---
+title: QR Code Best Practices
+description: Learn how to create effective, scannable QR codes that work reliably in any situation
+---
+
+## Choosing the Right Size
+
+Selecting the appropriate QR code size depends on how you plan to use it:
+
+### 128px - Digital Use
+Best for:
+- Embedding in websites
+- Mobile app interfaces
+- Email signatures
+- Social media posts
+
+<Note>
+  128px works well on screens but may lose quality if printed larger than 3-4cm.
+</Note>
+
+### 256px - Versatile Option
+Best for:
+- Small print materials (business cards, flyers)
+- Digital displays
+- Documents and presentations
+- Most general-purpose uses
+
+### 512px - High Quality
+Best for:
+- Large print materials (posters, banners)
+- Professional marketing materials
+- Packaging design
+- Any situation requiring maximum quality
+
+<Tip>
+  When in doubt, choose 512px. Larger files give you more flexibility and maintain quality when scaled.
+</Tip>
+
+## Adding Logos and Images
+
+QRcodeer allows you to add a center logo to personalize your QR codes. Follow these guidelines:
+
+### Logo Size Ratio
+The optimal logo size is **no more than 20% of the total QR code area**. QRcodeer automatically handles this sizing to ensure your QR code remains scannable.
+
+<Warning>
+  Logos that are too large can interfere with scanning. QR codes have built-in error correction, but oversized logos may exceed this tolerance.
+</Warning>
+
+### Logo Design Tips
+- Use simple logos with clear shapes
+- Ensure good contrast between logo and QR code background
+- Square or circular logos work best
+- Avoid very detailed or intricate designs
+
+### When to Skip the Logo
+- Mission-critical applications (event tickets, payment codes)
+- Very small print sizes
+- Low-quality printing conditions
+- When maximum scan reliability is essential
+
+## Testing Your QR Codes
+
+Always test QR codes before distributing them widely.
+
+<Accordion title="Testing Checklist">
+  - [ ] Test with at least 3 different devices (iOS, Android, different brands)
+  - [ ] Test with both native camera apps and dedicated QR readers
+  - [ ] Test in different lighting conditions
+  - [ ] If printing, test with a physical print sample
+  - [ ] Verify the destination URL is correct
+  - [ ] Check that the landing page is mobile-friendly
+</Accordion>
+
+<Tip>
+  Free QR code reader apps often have better scanning capabilities than native camera apps. Test with both types.
+</Tip>
+
+## Printing Guidelines
+
+### Minimum Print Sizes
+- **Absolute minimum**: 2cm x 2cm (0.8" x 0.8")
+- **Recommended minimum**: 3cm x 3cm (1.2" x 1.2")
+- **Ideal for posters**: 5cm x 5cm (2" x 2") or larger
+
+### Print Quality Considerations
+- Use **512px** size for all print projects
+- Print on matte or non-glossy surfaces when possible (reduces glare)
+- Ensure your printer settings are set to highest quality
+- Avoid printing on textured or patterned backgrounds
+- Leave adequate white space (quiet zone) around the QR code - at least 4-5mm
+
+<Warning>
+  Never stretch or distort QR codes when resizing. Always maintain the square aspect ratio or scanning will fail.
+</Warning>
+
+### Distance and Size Relationship
+For viewing from a distance:
+- **Arm's length (0.5m)**: 3cm minimum
+- **Across a room (3m)**: 10cm minimum
+- **Billboard (10m+)**: 30cm or larger
+
+## Color and Contrast
+
+QRcodeer generates black QR codes on white backgrounds for a good reason:
+
+### Why Black and White?
+- **Maximum contrast** ensures reliable scanning in all lighting
+- **Universal compatibility** with all QR code readers
+- **Consistent performance** across different devices
+- **Professional appearance** suitable for any context
+
+<Note>
+  While some tools create colored QR codes, black on white provides the highest scan success rate - often 95%+ across all conditions.
+</Note>
+
+### Background Considerations
+When placing your QR code:
+- Always use on white or very light backgrounds
+- Avoid placing on photos, patterns, or busy backgrounds
+- Ensure clean borders (quiet zone) around all sides
+- Don't place near other QR codes or barcodes
+
+## URL Management
+
+### Shorten Long URLs
+For QR codes containing URLs:
+
+<Tip>
+  Shorter URLs create simpler QR codes with larger modules (dots), making them easier to scan. Consider using a URL shortener for long links.
+</Tip>
+
+Benefits of shorter URLs:
+- Simpler QR code patterns
+- More reliable scanning
+- Smaller file sizes
+- Better error correction tolerance
+
+### URL Best Practices
+- Use HTTPS for security
+- Test the destination URL on mobile devices
+- Ensure the landing page loads quickly
+- Make sure the page is mobile-responsive
+- Avoid URLs with special characters when possible
+
+## Strategic Placement
+
+### Marketing Materials
+- **Business cards**: Bottom corner or back side
+- **Flyers and posters**: Below main call-to-action
+- **Brochures**: Near relevant content sections
+- **Product packaging**: Flat, accessible surface
+
+### Physical Locations
+- **Eye level** is ideal for easy scanning
+- **Well-lit areas** improve scan success
+- **Stable surfaces** (avoid moving or hanging placement)
+- **Accessible locations** where people can stop and scan
+
+<Info>
+  QR codes on moving objects (vehicles, rotating displays) are difficult to scan. Use them on stable, stationary surfaces.
+</Info>
+
+### Digital Placement
+- Email newsletters (linked to landing page)
+- Social media posts and profiles
+- Website footers for quick mobile access
+- Digital receipts and confirmations
+- Presentation slides
+
+## Common Use Cases
+
+### Restaurant Menus
+- Use **256px or 512px** for table tents
+- Place on every table in a protective stand
+- Include simple instructions ("Scan for menu")
+- Ensure WiFi is available for customers
+
+### Event Check-in
+- Use **512px** for printed tickets
+- Avoid logos on critical check-in codes
+- Test with your check-in system beforehand
+- Print on white cardstock for best results
+
+### Product Information
+- Link to manuals, setup guides, or support pages
+- Place on product packaging near opening
+- Use **256px or 512px** depending on package size
+- Consider adding "Scan for instructions" text
+
+### Marketing Campaigns
+- Track different campaigns with unique URLs
+- Include QR codes on all print advertising
+- Place prominently with clear call-to-action
+- Link to mobile-optimized landing pages
+
+<Tip>
+  Add a short text prompt near your QR code like "Scan to learn more" or "Scan for special offer" to increase engagement by 30-40%.
+</Tip>
+
+## Accessibility Considerations
+
+- Always include a text URL or alternative access method
+- Don't rely solely on QR codes for critical information
+- Consider users who may not have smartphones
+- Ensure the linked content is accessible (screen reader friendly)
+- Use descriptive text near the QR code explaining what it links to
+
+## Troubleshooting Scan Issues
+
+If your QR code isn't scanning reliably:
+
+1. **Check the URL** - Verify it's correct and active
+2. **Increase size** - Try a larger print or display size
+3. **Improve contrast** - Ensure clean white background
+4. **Remove or reduce logo** - Test without center image
+5. **Check quiet zone** - Add more white space around edges
+6. **Test lighting** - Ensure adequate, even lighting
+7. **Verify print quality** - Check for smudging or distortion
+
+<Warning>
+  If you've laminated or covered your QR code with glossy material, glare may prevent scanning. Use matte finishes when possible.
+</Warning>
